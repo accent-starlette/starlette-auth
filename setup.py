@@ -65,9 +65,12 @@ setup(
     packages=get_packages(package_name),
     package_data=get_package_data(package_name),
     install_requires=[
+        'jinja2',
+        'python-multipart',
         'starlette',
         'starlette-sqlalchemy',
-        'typesystem'
+        'typesystem',
+        'typing'
     ],
     dependency_links=[
         "git+ssh://git@github.com/accent-starlette/starlette-sqlalchemy.git@master#egg=starlette_sqlalchemy"
