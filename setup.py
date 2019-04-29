@@ -65,7 +65,9 @@ setup(
     packages=get_packages(package_name),
     package_data=get_package_data(package_name),
     install_requires=[
-        'starlette-sqlalchemy'
+        'starlette',
+        'starlette-sqlalchemy',
+        'typesystem'
     ],
     dependency_links=[
         "git+ssh://git@github.com/accent-starlette/starlette-sqlalchemy.git@master#egg=starlette_sqlalchemy"
