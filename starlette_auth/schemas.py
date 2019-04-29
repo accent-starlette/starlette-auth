@@ -7,17 +7,17 @@ from starlette_auth.typings import Email
 class ChangePasswordSchema(typesystem.Schema):
     old_password = typesystem.String(
         title="Old password",
-        min_length=8,
+        min_length=1,
         format='password'
     )
     new_password = typesystem.String(
         title="New password",
-        min_length=8,
+        min_length=1,
         format='password'
     )
     confirm_new_password = typesystem.String(
         title="Confirm new password",
-        min_length=8,
+        min_length=1,
         format='password'
     )
 
@@ -37,6 +37,6 @@ class ChangePasswordSchema(typesystem.Schema):
 class LoginSchema(typesystem.Schema):
     email = Email()
     password = typesystem.String(
-        min_length=8,
+        min_length=1,
         format='password'
     )
