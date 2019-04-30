@@ -35,8 +35,11 @@ class ChangePasswordSchema(typesystem.Schema):
 
 
 class LoginSchema(typesystem.Schema):
-    email = Email()
+    email = Email(
+        title="Email"
+    )
     password = typesystem.String(
+        title="Password",
         min_length=1,
         format='password'
     )
