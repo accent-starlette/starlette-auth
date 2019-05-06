@@ -4,7 +4,7 @@ import os
 
 import sqlalchemy as sa
 from sqlalchemy_utils import EmailType
-from starlette_sqlalchemy import Base
+from starlette_core.database import Base
 
 
 class User(Base):

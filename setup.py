@@ -69,12 +69,12 @@ setup(
         'jinja2',
         'python-multipart',
         'starlette',
-        'starlette-sqlalchemy==0.0.1.b1',
+        'starlette-core==0.0.1.b1',
         'typesystem',
         'typing'
     ],
     dependency_links=[
-        "https://github.com/accent-starlette/starlette-sqlalchemy/tarball/master#egg=starlette-sqlalchemy-0.0.1.b1"
+        "https://github.com/accent-starlette/starlette-core/tarball/master#egg=starlette-core-0.0.1.b1"
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
