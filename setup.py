@@ -71,10 +71,8 @@ setup(
         'starlette',
         'starlette-core==0.0.1.b1',
         'typesystem',
-        'typing'
-    ],
-    dependency_links=[
-        "https://github.com/accent-starlette/starlette-core/tarball/master#egg=starlette-core-0.0.1.b1"
+        'typing',
+        'starlette-core @ git+https://github.com/accent-starlette/starlette-core@master'
     ],
     classifiers=[
         "Development Status :: 3 - Alpha",
