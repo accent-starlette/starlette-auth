@@ -2,11 +2,12 @@ from sqlalchemy.orm.exc import NoResultFound
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
+from starlette_core.database import Session
 from typesystem import Message, ValidationError
 
-from starlette_auth.config import config
-from starlette_auth.schemas import ChangePasswordSchema, LoginSchema
-from starlette_auth.tables import User
+from .config import config
+from .schemas import ChangePasswordSchema, LoginSchema
+from .tables import User
 
 
 class ChangePassword(HTTPEndpoint):

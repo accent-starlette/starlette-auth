@@ -1,5 +1,6 @@
 from starlette.routing import Route, Router
-from starlette_auth.endpoints import ChangePassword, Login, Logout
+
+from .endpoints import ChangePassword, Login, Logout
 
 
 app = Router([

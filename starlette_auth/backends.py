@@ -1,7 +1,7 @@
 from starlette.authentication import AuthenticationBackend, AuthCredentials, UnauthenticatedUser
 from starlette.requests import HTTPConnection
 
-from starlette_auth.tables import User
+from .tables import User
 
 
 class ModelAuthBackend(AuthenticationBackend):

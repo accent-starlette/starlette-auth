@@ -1,9 +1,9 @@
 __version__ = "0.0.1.b1"
 
 
-from starlette_auth.backends import ModelAuthBackend
-from starlette_auth.config import config
-from starlette_auth.main import app
+from .backends import ModelAuthBackend
+from .config import config
+from .main import app
 
 
 __all__ = [
