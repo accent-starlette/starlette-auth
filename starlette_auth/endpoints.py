@@ -39,6 +39,7 @@ class ChangePassword(HTTPEndpoint):
 
         else:
             request.user.set_password(passwords.new_password)
+            request.user.save()
 
         return RedirectResponse(config.change_pw_redirect_url)
 
