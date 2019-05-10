@@ -69,7 +69,6 @@ setup(
         'jinja2',
         'python-multipart',
         'starlette',
-        'starlette-core==0.0.1.b1',
         'typesystem',
         'typing',
         'starlette-core @ git+https://github.com/accent-starlette/starlette-core@master'
