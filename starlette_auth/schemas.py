@@ -5,8 +5,8 @@ from .typings import Email
 
 
 class ChangePasswordSchema(typesystem.Schema):
-    old_password = typesystem.String(
-        title="Old password",
+    current_password = typesystem.String(
+        title="Current password",
         min_length=1,
         format='password'
     )

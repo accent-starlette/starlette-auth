@@ -30,8 +30,8 @@ class ChangePassword(HTTPEndpoint):
             context = {'request': request, 'form': form}
             return config.templates.TemplateResponse(template, context)
 
-        if not request.user.check_password(passwords.old_password):
-            message = Message(text='Enter your current Password.', index=['old_password'])
+        if not request.user.check_password(passwords.current_password):
+            message = Message(text='Enter your current Password.', index=['current_password'])
             errors = ValidationError(messages=[message])
 
             form = config.forms.Form(ChangePasswordSchema, errors=errors)
