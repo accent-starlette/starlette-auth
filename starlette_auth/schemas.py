@@ -1,7 +1,7 @@
 import typesystem
 import typing
 
-from .typings import Email
+from starlette_core.typesystem import Email
 
 
 class ChangePasswordSchema(typesystem.Schema):
