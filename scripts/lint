@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+set -x
+
+mypy starlette_auth --ignore-missing-imports
+autoflake --in-place --recursive --remove-unused-variables starlette_auth tests
+black starlette_auth tests
+isort --multi-line=3 --trailing-comma --force-grid-wrap=0 --combine-as --line-width 88 --recursive --apply starlette_auth tests

@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+set -x
+
+pytest --cov=starlette_auth --cov-report html
+mypy starlette_auth --ignore-missing-imports
+autoflake --recursive --remove-unused-variables starlette_auth tests
+black starlette_auth tests --check

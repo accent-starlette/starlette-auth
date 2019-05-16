@@ -5,9 +5,4 @@ from .backends import ModelAuthBackend
 from .config import config
 from .main import app
 
-
-__all__ = [
-    'ModelAuthBackend',
-    'config',
-    'app'
-]
+__all__ = ["ModelAuthBackend", "config", "app"]
