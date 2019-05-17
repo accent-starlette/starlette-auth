@@ -9,3 +9,4 @@ isort
 mypy
 pytest
 pytest-cov
+requests
