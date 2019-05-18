@@ -5,8 +5,6 @@ from starlette_core.database import Database, DatabaseURL, Session
 url = DatabaseURL("sqlite://")
 db = Database(url)
 
-from starlette_auth.tables import User  # noqa isort:skip
-
 
 @pytest.fixture(scope="session", autouse=True)
 def database():
