@@ -5,14 +5,10 @@ from starlette_core.typesystem import Email
 
 
 class ChangePasswordSchema(typesystem.Schema):
-    current_password = typesystem.String(
-        title="Current password", min_length=1, format="password"
-    )
-    new_password = typesystem.String(
-        title="New password", min_length=1, format="password"
-    )
+    current_password = typesystem.String(title="Current password", format="password")
+    new_password = typesystem.String(title="New password", format="password")
     confirm_new_password = typesystem.String(
-        title="Confirm new password", min_length=1, format="password"
+        title="Confirm new password", format="password"
     )
 
     @classmethod
@@ -31,4 +27,4 @@ class ChangePasswordSchema(typesystem.Schema):
 
 class LoginSchema(typesystem.Schema):
     email = Email(title="Email")
-    password = typesystem.String(title="Password", min_length=1, format="password")
+    password = typesystem.String(title="Password", format="password")
