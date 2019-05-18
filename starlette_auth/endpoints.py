@@ -2,7 +2,6 @@ from sqlalchemy.orm.exc import NoResultFound
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
-from starlette_core.database import Session
 from typesystem import Message, ValidationError
 
 from .config import config
