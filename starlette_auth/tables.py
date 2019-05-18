@@ -3,8 +3,16 @@ import hashlib
 import os
 
 import sqlalchemy as sa
+from sqlalchemy import orm
 from sqlalchemy_utils import EmailType
 from starlette_core.database import Base
+
+user_scopes = sa.Table(
+    "userscope",
+    Base.metadata,
+    sa.Column("user_id", sa.Integer, sa.ForeignKey("user.id")),
+    sa.Column("scope_id", sa.Integer, sa.ForeignKey("scope.id")),
+)
 
 
 class User(Base):
@@ -13,6 +21,7 @@ class User(Base):
     first_name = sa.Column(sa.String(120))
     last_name = sa.Column(sa.String(120))
     is_active = sa.Column(sa.Boolean, nullable=False, default=True)
+    scopes = orm.relationship("Scope", secondary=user_scopes)
 
     def __str__(self):
         return self.email
@@ -41,3 +50,11 @@ class User(Base):
         )
         password_hash = binascii.hexlify(password_hash).decode("ascii")  # type: ignore
         return password_hash == stored_password
+
+
+class Scope(Base):
+    code = sa.Column(sa.String(50), nullable=False, unique=True)
+    description = sa.Column(sa.Text)
+
+    def __str__(self):
+        return self.code

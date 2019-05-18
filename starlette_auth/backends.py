@@ -17,5 +17,7 @@ class ModelAuthBackend(AuthenticationBackend):
     async def authenticate(self, conn: HTTPConnection):
         user = self.get_user(conn)
         if user and user.is_authenticated:
-            return AuthCredentials(["authenticated"]), user
-        return AuthCredentials(["unauthenticated"]), UnauthenticatedUser()
+            scopes = ["authenticated"] + sorted([str(s) for s in user.scopes])
+            return AuthCredentials(scopes), user
+        scopes = ["unauthenticated"]
+        return AuthCredentials(scopes), UnauthenticatedUser()
