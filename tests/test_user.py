@@ -20,6 +20,10 @@ def test_fields():
     assert_model_field(User, "password", sa.String, True, False, False, 255)
 
 
+def test_relationships():
+    assert User.scopes.property.target.name == "scope"
+
+
 def test_model_data():
     user = User(**data)
 
