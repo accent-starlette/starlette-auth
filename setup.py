@@ -68,9 +68,6 @@ setup(
         'itsdangerous',
         'jinja2',
         'python-multipart',
-        'starlette',
-        'typesystem',
-        'typing',
         'starlette-core @ git+https://github.com/accent-starlette/starlette-core@master'
     ],
     classifiers=[
