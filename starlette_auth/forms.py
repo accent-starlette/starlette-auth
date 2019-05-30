@@ -1,4 +1,3 @@
-from starlette_core.fields import Email
 from wtforms import fields, form, validators
 from wtforms.fields.html5 import EmailField
 
