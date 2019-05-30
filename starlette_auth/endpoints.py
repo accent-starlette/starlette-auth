@@ -2,10 +2,9 @@ from sqlalchemy.orm.exc import NoResultFound
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
-from typesystem import Message, ValidationError
 
 from .config import config
-from .schemas import ChangePasswordSchema, LoginSchema
+from .forms import ChangePasswordForm, LoginForm
 from .tables import User
 
 
@@ -13,7 +12,7 @@ class ChangePassword(HTTPEndpoint):
     @requires(["authenticated"])
     async def get(self, request):
         template = "starlette_auth/change_password.html"
-        form = config.forms.Form(ChangePasswordSchema)
+        form = ChangePasswordForm()
         context = {"request": request, "form": form}
         return config.templates.TemplateResponse(template, context)
 
@@ -22,25 +21,19 @@ class ChangePassword(HTTPEndpoint):
         template = "starlette_auth/change_password.html"
 
         data = await request.form()
-        passwords, errors = ChangePasswordSchema.validate_or_error(data)
+        form = ChangePasswordForm(data)
 
-        if errors:
-            form = config.forms.Form(ChangePasswordSchema, errors=errors)
+        if not form.validate():
             context = {"request": request, "form": form}
             return config.templates.TemplateResponse(template, context)
 
-        if not request.user.check_password(passwords.current_password):
-            message = Message(
-                text="Enter your current password.", index=["current_password"]
-            )
-            errors = ValidationError(messages=[message])
-
-            form = config.forms.Form(ChangePasswordSchema, errors=errors)
+        if not request.user.check_password(form.current_password.data):
+            form.current_password.errors.append("Enter your current password.")
             context = {"request": request, "form": form}
             return config.templates.TemplateResponse(template, context)
 
         else:
-            request.user.set_password(passwords.new_password)
+            request.user.set_password(form.new_password.data)
             request.user.save()
 
         return RedirectResponse(config.change_pw_redirect_url)
@@ -49,7 +42,7 @@ class ChangePassword(HTTPEndpoint):
 class Login(HTTPEndpoint):
     async def get(self, request):
         template = "starlette_auth/login.html"
-        form = config.forms.Form(LoginSchema)
+        form = LoginForm()
         context = {"request": request, "form": form}
         return config.templates.TemplateResponse(template, context)
 
@@ -57,16 +50,15 @@ class Login(HTTPEndpoint):
         template = "starlette_auth/login.html"
 
         data = await request.form()
-        login, errors = LoginSchema.validate_or_error(data)
+        form = LoginForm(data)
 
-        if errors:
-            form = config.forms.Form(LoginSchema, values=data, errors=errors)
+        if not form.validate():
             context = {"request": request, "form": form}
             return config.templates.TemplateResponse(template, context)
 
         try:
-            user = User.query.filter(User.email == login.email.lower()).one()
-            if user.check_password(login.password):
+            user = User.query.filter(User.email == form.email.data.lower()).one()
+            if user.check_password(form.password.data):
                 request.session["user"] = user.id
                 return RedirectResponse(config.login_redirect_url)
 
@@ -75,10 +67,7 @@ class Login(HTTPEndpoint):
 
         request.session.clear()
 
-        message = Message(text="Invalid email or password.", index=["password"])
-        errors = ValidationError(messages=[message])
-
-        form = config.forms.Form(LoginSchema, errors=errors)
+        form.password.errors.append("Invalid email or password.")
         context = {"request": request, "form": form}
 
         return config.templates.TemplateResponse(template, context)
