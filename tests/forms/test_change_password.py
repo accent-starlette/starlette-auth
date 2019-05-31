@@ -1,4 +1,5 @@
 from starlette_auth.forms import ChangePasswordForm
+from starlette_core.testing import DummyPostData
 
 
 def test_valid():
@@ -7,14 +8,14 @@ def test_valid():
         "new_password": "password",
         "confirm_new_password": "password",
     }
-    form = ChangePasswordForm(data=data)
+    form = ChangePasswordForm(DummyPostData(data))
     assert form.validate()
     assert form.data == data
 
 
 def test_invalid():
     data = {}
-    form = ChangePasswordForm(data=data)
+    form = ChangePasswordForm(DummyPostData(data))
     assert form.validate() is False
     assert form.errors == {
         "current_password": ["This field is required."],
@@ -23,7 +24,7 @@ def test_invalid():
     }
 
     data = {"current_password": "", "new_password": "", "confirm_new_password": ""}
-    form = ChangePasswordForm(data=data)
+    form = ChangePasswordForm(DummyPostData(data))
     assert form.validate() is False
     assert form.errors == {
         "current_password": ["This field is required."],
@@ -36,6 +37,6 @@ def test_invalid():
         "new_password": "password1",
         "confirm_new_password": "password2",
     }
-    form = ChangePasswordForm(data=data)
+    form = ChangePasswordForm(DummyPostData(data))
     assert form.validate() is False
     assert form.errors == {"confirm_new_password": ["The passwords do not match."]}
