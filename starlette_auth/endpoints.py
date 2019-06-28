@@ -11,14 +11,15 @@ from .tables import User
 class ChangePassword(HTTPEndpoint):
     @requires(["authenticated"])
     async def get(self, request):
-        template = "starlette_auth/change_password.html"
+        template = config.change_pw_template
+
         form = ChangePasswordForm()
         context = {"request": request, "form": form}
         return config.templates.TemplateResponse(template, context)
 
     @requires(["authenticated"])
     async def post(self, request):
-        template = "starlette_auth/change_password.html"
+        template = config.change_pw_template
 
         data = await request.form()
         form = ChangePasswordForm(data)
@@ -41,13 +42,14 @@ class ChangePassword(HTTPEndpoint):
 
 class Login(HTTPEndpoint):
     async def get(self, request):
-        template = "starlette_auth/login.html"
+        template = config.login_template
+
         form = LoginForm()
         context = {"request": request, "form": form}
         return config.templates.TemplateResponse(template, context)
 
     async def post(self, request):
-        template = "starlette_auth/login.html"
+        template = config.login_template
 
         data = await request.form()
         form = LoginForm(data)
