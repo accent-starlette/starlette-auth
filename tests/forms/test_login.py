@@ -1,5 +1,6 @@
-from starlette_auth.forms import LoginForm
 from starlette_core.testing import DummyPostData
+
+from starlette_auth.forms import LoginForm
 
 
 def test_valid():

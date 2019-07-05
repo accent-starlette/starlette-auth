@@ -1,5 +1,6 @@
-from starlette_auth.forms import ChangePasswordForm
 from starlette_core.testing import DummyPostData
+
+from starlette_auth.forms import ChangePasswordForm
 
 
 def test_valid():

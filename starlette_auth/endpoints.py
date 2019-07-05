@@ -1,4 +1,5 @@
 from sqlalchemy.orm.exc import NoResultFound
+from starlette import status
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
@@ -37,7 +38,9 @@ class ChangePassword(HTTPEndpoint):
             request.user.set_password(form.new_password.data)
             request.user.save()
 
-        return RedirectResponse(config.change_pw_redirect_url)
+        return RedirectResponse(
+            url=config.change_pw_redirect_url, status_code=status.HTTP_302_FOUND
+        )
 
 
 class Login(HTTPEndpoint):
@@ -62,7 +65,9 @@ class Login(HTTPEndpoint):
             user = User.query.filter(User.email == form.email.data.lower()).one()
             if user.check_password(form.password.data):
                 request.session["user"] = user.id
-                return RedirectResponse(config.login_redirect_url)
+                return RedirectResponse(
+                    url=config.login_redirect_url, status_code=status.HTTP_302_FOUND
+                )
 
         except NoResultFound:
             pass
@@ -78,4 +83,6 @@ class Login(HTTPEndpoint):
 class Logout(HTTPEndpoint):
     async def get(self, request):
         request.session.clear()
-        return RedirectResponse(config.logout_redirect_url)
+        return RedirectResponse(
+            url=config.logout_redirect_url, status_code=status.HTTP_302_FOUND
+        )
