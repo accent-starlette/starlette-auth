@@ -21,3 +21,7 @@ class LoginForm(form.Form):
         ]
     )
     password = fields.PasswordField(validators=[validators.DataRequired()])
+
+
+class TwoFactorVerifyForm(form.Form):
+    authentication_code = fields.PasswordField(validators=[validators.DataRequired()])

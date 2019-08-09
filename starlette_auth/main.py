@@ -1,6 +1,6 @@
 from starlette.routing import Route, Router
 
-from .endpoints import ChangePassword, Login, Logout
+from .endpoints import ChangePassword, Login, Logout, TwoFactorVerify
 
 app = Router(
     [
@@ -11,6 +11,12 @@ app = Router(
             endpoint=ChangePassword,
             methods=["GET", "POST"],
             name="change_password",
+        ),
+        Route(
+            "/two-factor-verify",
+            endpoint=TwoFactorVerify,
+            methods=["GET", "POST"],
+            name="two_factor_verify",
         ),
     ]
 )

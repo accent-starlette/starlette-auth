@@ -71,6 +71,11 @@ setup(
         'wtforms',
         'starlette-core @ git+https://github.com/accent-starlette/starlette-core@master'
     ],
+    extras_require={
+        "tfa": [
+            "pyotp",
+        ]
+    },
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Developers",

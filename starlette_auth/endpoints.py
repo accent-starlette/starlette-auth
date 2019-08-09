@@ -5,7 +5,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
 
 from .config import config
-from .forms import ChangePasswordForm, LoginForm
+from .forms import ChangePasswordForm, LoginForm, TwoFactorVerifyForm
 from .tables import User
 
 
@@ -86,3 +86,38 @@ class Logout(HTTPEndpoint):
         return RedirectResponse(
             url=config.logout_redirect_url, status_code=status.HTTP_302_FOUND
         )
+
+
+class TwoFactorVerify(HTTPEndpoint):
+    @requires(["authenticated"])
+    async def get(self, request):
+        template = config.two_factor_template
+
+        form = TwoFactorVerifyForm()
+        context = {"request": request, "form": form}
+        return config.templates.TemplateResponse(template, context)
+
+    @requires(["authenticated"])
+    async def post(self, request):
+        template = config.two_factor_template
+
+        data = await request.form()
+        form = TwoFactorVerifyForm(data)
+
+        if not form.validate():
+            context = {"request": request, "form": form}
+            return config.templates.TemplateResponse(template, context)
+
+        if request.user.check_two_factor(form.authentication_code.data):
+            if not request.user.two_factor_verified:
+                request.user.two_factor_verified = True
+                request.user.save()
+            request.session["two_factor_verified"] = True
+            return RedirectResponse(
+                url=config.login_redirect_url, status_code=status.HTTP_302_FOUND
+            )
+
+        form.authentication_code.errors.append("Invalid authentication code.")
+        context = {"request": request, "form": form}
+
+        return config.templates.TemplateResponse(template, context)
