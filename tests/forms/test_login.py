@@ -1,3 +1,4 @@
+import pytest
 from starlette_core.testing import DummyPostData
 
 from starlette_auth.forms import LoginForm
@@ -10,43 +11,19 @@ def test_valid():
     assert form.data == data
 
 
-def test_invalid():
-    data = {}
-    form = LoginForm(DummyPostData(data))
+@pytest.mark.parametrize(
+    "test_data",
+    [
+        {},
+        {"email": "", "password": ""},
+        {"email": " ", "password": " "},
+        {"email": "invalid", "password": ""},
+        {"email": "invalid.com", "password": ""},
+        {"email": "invalid@invalid", "password": ""},
+    ],
+)
+def test_invalid(test_data):
+    form = LoginForm(DummyPostData(test_data))
     assert form.validate() is False
-    assert form.errors == {
-        "email": ["This field is required."],
-        "password": ["This field is required."],
-    }
-
-    data = {"email": "", "password": ""}
-    form = LoginForm(DummyPostData(data))
-    assert form.validate() is False
-    assert form.errors == {
-        "email": ["This field is required."],
-        "password": ["This field is required."],
-    }
-
-    data = {"email": "invalid.com"}
-    form = LoginForm(DummyPostData(data))
-    assert form.validate() is False
-    assert form.errors == {
-        "email": ["Must be a valid email."],
-        "password": ["This field is required."],
-    }
-
-    data = {"email": "invalid"}
-    form = LoginForm(DummyPostData(data))
-    assert form.validate() is False
-    assert form.errors == {
-        "email": ["Must be a valid email."],
-        "password": ["This field is required."],
-    }
-
-    data = {"email": "invalid@invalid"}
-    form = LoginForm(DummyPostData(data))
-    assert form.validate() is False
-    assert form.errors == {
-        "email": ["Must be a valid email."],
-        "password": ["This field is required."],
-    }
+    assert "email" in form.errors
+    assert "password" in form.errors

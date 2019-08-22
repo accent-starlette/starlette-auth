@@ -1,3 +1,4 @@
+import pytest
 from starlette_core.testing import DummyPostData
 
 from starlette_auth.forms import ChangePasswordForm
@@ -14,25 +15,23 @@ def test_valid():
     assert form.data == data
 
 
-def test_invalid():
-    data = {}
-    form = ChangePasswordForm(DummyPostData(data))
+@pytest.mark.parametrize(
+    "test_data",
+    [
+        {},
+        {"current_password": "", "new_password": "", "confirm_new_password": ""},
+        {"current_password": " ", "new_password": " ", "confirm_new_password": " "},
+    ],
+)
+def test_invalid(test_data):
+    form = ChangePasswordForm(DummyPostData(test_data))
     assert form.validate() is False
-    assert form.errors == {
-        "current_password": ["This field is required."],
-        "new_password": ["This field is required."],
-        "confirm_new_password": ["This field is required."],
-    }
+    assert "current_password" in form.errors
+    assert "new_password" in form.errors
+    assert "confirm_new_password" in form.errors
 
-    data = {"current_password": "", "new_password": "", "confirm_new_password": ""}
-    form = ChangePasswordForm(DummyPostData(data))
-    assert form.validate() is False
-    assert form.errors == {
-        "current_password": ["This field is required."],
-        "new_password": ["This field is required."],
-        "confirm_new_password": ["This field is required."],
-    }
 
+def test_passwords_dont_match():
     data = {
         "current_password": "password",
         "new_password": "password1",
