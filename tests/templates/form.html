@@ -1,0 +1,15 @@
+<html>
+    <head></head>
+    <body>
+        <form method="post" novalidate>
+            {% for field in form %}
+            {{ field.label }}
+            {{ field }}
+            {% if field.errors %}
+                <cite>{{ field.errors|join(' ') }}</cite>
+            {% endif %}
+            {% endfor %}
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>
