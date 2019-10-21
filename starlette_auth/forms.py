@@ -5,6 +5,10 @@ from starlette_core.mail import send_message
 from wtforms import fields, form, validators
 from wtforms.fields.html5 import EmailField
 
+from .tables import User
+from .tokens import token_generator
+from .utils.http import urlsafe_base64_encode
+
 
 class ChangePasswordForm(form.Form):
     current_password = fields.PasswordField(validators=[validators.DataRequired()])
@@ -38,8 +42,18 @@ class PasswordResetForm(form.Form):
     async def send_email(self, request: Request):
         from . import config
 
+        user = User.query.filter(User.email == self.data["email"]).one_or_none()
+
+        if not user:
+            return
+
         templates = config.templates
-        context = {"request": request}
+        context = {
+            "request": request,
+            "uid": urlsafe_base64_encode(bytes(str(user.id), encoding="utf-8")),
+            "user": user,
+            "token": token_generator.make_token(user),
+        }
         msg = EmailMessage()
 
         subject_tmpl = templates.get_template(config.reset_pw_email_subject_template)
@@ -52,3 +66,13 @@ class PasswordResetForm(form.Form):
         msg.set_content(body)
 
         send_message(msg)
+
+
+class PasswordResetConfirmForm(form.Form):
+    new_password = fields.PasswordField(validators=[validators.DataRequired()])
+    confirm_new_password = fields.PasswordField(
+        validators=[
+            validators.DataRequired(),
+            validators.EqualTo("new_password", message="The passwords do not match."),
+        ]
+    )

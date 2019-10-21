@@ -91,4 +91,4 @@ class PasswordResetTokenGenerator:
         return datetime.utcnow()
 
 
-default_token_generator = PasswordResetTokenGenerator()
+token_generator = PasswordResetTokenGenerator()

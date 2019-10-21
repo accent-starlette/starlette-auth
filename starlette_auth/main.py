@@ -26,5 +26,17 @@ app = Router(
             methods=["GET"],
             name="password_reset_done",
         ),
+        Route(
+            "/password/reset/{uidb64:str}/{token:str}",
+            endpoint=endpoints.PasswordResetConfirm,
+            methods=["GET", "POST"],
+            name="password_reset_confirm",
+        ),
+        Route(
+            "/password/reset/complete",
+            endpoint=endpoints.PasswordResetComplete,
+            methods=["GET"],
+            name="password_reset_complete",
+        ),
     ]
 )

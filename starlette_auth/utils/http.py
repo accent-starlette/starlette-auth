@@ -1,3 +1,7 @@
+import base64
+from binascii import Error as BinasciiError
+
+
 def base36_to_int(s: str):
     """
     Convert a base 36 string to an int. Raise ValueError if the input won't fit
@@ -23,3 +27,23 @@ def int_to_base36(i: int):
         i, n = divmod(i, 36)
         b36 = char_set[n] + b36
     return b36
+
+
+def urlsafe_base64_decode(s):
+    """
+    Decode a base64 encoded string. Add back any trailing equal signs that
+    might have been stripped.
+    """
+    s = s.encode()
+    try:
+        return base64.urlsafe_b64decode(s.ljust(len(s) + len(s) % 4, b"="))
+    except (LookupError, BinasciiError) as e:
+        raise ValueError(e)
+
+
+def urlsafe_base64_encode(s):
+    """
+    Encode a bytestring to a base64 string for use in URLs. Strip any trailing
+    equal signs.
+    """
+    return base64.urlsafe_b64encode(s).rstrip(b"\n=").decode("ascii")
