@@ -8,6 +8,8 @@ class AppConfig:
     login_redirect_url = "/"
     login_template = "starlette_auth/login.html"
     logout_redirect_url = "/"
+    password_reset_timeout = 60
+    secret_key = ""
 
 
 config = AppConfig()
