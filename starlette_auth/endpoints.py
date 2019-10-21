@@ -102,3 +102,11 @@ class PasswordReset(HTTPEndpoint):
 
     async def post(self, request):
         pass
+
+
+class PasswordResetDone(HTTPEndpoint):
+    async def get(self, request):
+        template = config.reset_pw_done_template
+
+        context = {"request": request}
+        return config.templates.TemplateResponse(template, context)

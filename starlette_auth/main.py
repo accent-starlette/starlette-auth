@@ -1,22 +1,30 @@
 from starlette.routing import Route, Router
 
-from .endpoints import ChangePassword, Login, Logout, PasswordReset
+from . import endpoints
 
 app = Router(
     [
-        Route("/login", endpoint=Login, methods=["GET", "POST"], name="login"),
-        Route("/logout", endpoint=Logout, methods=["GET"], name="logout"),
+        Route(
+            "/login", endpoint=endpoints.Login, methods=["GET", "POST"], name="login"
+        ),
+        Route("/logout", endpoint=endpoints.Logout, methods=["GET"], name="logout"),
         Route(
             "/password/change",
-            endpoint=ChangePassword,
+            endpoint=endpoints.ChangePassword,
             methods=["GET", "POST"],
             name="password_change",
         ),
         Route(
             "/password/reset",
-            endpoint=PasswordReset,
+            endpoint=endpoints.PasswordReset,
             methods=["GET", "POST"],
             name="password_reset",
+        ),
+        Route(
+            "/password/reset/done",
+            endpoint=endpoints.PasswordResetDone,
+            methods=["GET"],
+            name="password_reset_done",
         ),
     ]
 )
