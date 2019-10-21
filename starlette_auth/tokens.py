@@ -54,7 +54,7 @@ class PasswordResetTokenGenerator:
         hash_string = salted_hmac(
             self.key_salt,
             self._make_hash_value(user, timestamp),
-            secret=config.secret_key,
+            secret=str(config.secret_key),
         ).hexdigest()[
             ::2
         ]  # Limit to 20 characters to shorten the URL.
