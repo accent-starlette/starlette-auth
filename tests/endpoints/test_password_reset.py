@@ -21,7 +21,7 @@ def test_post_redirects(client, monkeypatch):
 
     response = client.post("/auth/password/reset", data={"email": "user@example.com"})
     assert response.status_code == 302
-    assert response.next.url == f"http://testserver{config.reset_pw_redirect_url}"
+    assert response.next.url == "http://testserver/auth/password/reset/done"
 
 
 def test_email_not_sent_if_user_is_not_active(client, user, monkeypatch):
@@ -35,7 +35,7 @@ def test_email_not_sent_if_user_is_not_active(client, user, monkeypatch):
 
     response = client.post("/auth/password/reset", data={"email": "user@example.com"})
     assert response.status_code == 302
-    assert response.next.url == f"http://testserver{config.reset_pw_redirect_url}"
+    assert response.next.url == "http://testserver/auth/password/reset/done"
 
 
 def test_email_sent_if_user_exists(client, user, monkeypatch):
@@ -48,7 +48,7 @@ def test_email_sent_if_user_exists(client, user, monkeypatch):
 
     response = client.post("/auth/password/reset", data={"email": user.email})
     assert response.status_code == 302
-    assert response.next.url == f"http://testserver{config.reset_pw_redirect_url}"
+    assert response.next.url == "http://testserver/auth/password/reset/done"
 
 
 @pytest.mark.parametrize(

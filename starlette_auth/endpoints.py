@@ -123,7 +123,8 @@ class PasswordReset(HTTPEndpoint):
             await form.send_email(request)
 
         return RedirectResponse(
-            url=config.reset_pw_redirect_url, status_code=status.HTTP_302_FOUND
+            request.url_for("auth:password_reset_done"),
+            status_code=status.HTTP_302_FOUND,
         )
 
 
@@ -187,7 +188,8 @@ class PasswordResetConfirm(HTTPEndpoint):
         user.save()
 
         return RedirectResponse(
-            url=config.reset_pw_confirm_redirect_url, status_code=status.HTTP_302_FOUND
+            url=request.url_for("auth:password_reset_complete"),
+            status_code=status.HTTP_302_FOUND,
         )
 
 
