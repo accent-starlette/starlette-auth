@@ -10,6 +10,7 @@ class AppConfig:
     logout_redirect_url = "/"
     reset_pw_template = "starlette_auth/password_reset.html"
     reset_pw_done_template = "starlette_auth/password_reset_done.html"
+    reset_pw_redirect_url = "/auth/password/reset/done"
     reset_pw_timeout = 60
     secret_key = ""
 

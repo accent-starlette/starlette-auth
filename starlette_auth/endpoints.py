@@ -101,7 +101,18 @@ class PasswordReset(HTTPEndpoint):
         return config.templates.TemplateResponse(template, context)
 
     async def post(self, request):
-        pass
+        template = config.reset_pw_template
+
+        data = await request.form()
+        form = PasswordResetForm(data)
+
+        if not form.validate():
+            context = {"request": request, "form": form}
+            return config.templates.TemplateResponse(template, context)
+
+        return RedirectResponse(
+            url=config.reset_pw_redirect_url, status_code=status.HTTP_302_FOUND
+        )
 
 
 class PasswordResetDone(HTTPEndpoint):
