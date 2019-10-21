@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 from starlette.authentication import requires
@@ -65,6 +67,8 @@ class Login(HTTPEndpoint):
             user = User.query.filter(User.email == form.email.data.lower()).one()
             if user.check_password(form.password.data):
                 request.session["user"] = user.id
+                user.last_login = datetime.utcnow()
+                user.save()
                 return RedirectResponse(
                     url=config.login_redirect_url, status_code=status.HTTP_302_FOUND
                 )

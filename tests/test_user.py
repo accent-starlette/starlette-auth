@@ -17,6 +17,7 @@ def test_fields():
     assert_model_field(User, "first_name", sa.String, True, False, False, 120)
     assert_model_field(User, "last_name", sa.String, True, False, False, 120)
     assert_model_field(User, "is_active", sa.Boolean, False, False, False)
+    assert_model_field(User, "last_login", sa.DateTime, True, False, False)
     assert_model_field(User, "password", sa.String, True, False, False, 255)
 
 

@@ -21,6 +21,7 @@ class User(Base):
     first_name = sa.Column(sa.String(120))
     last_name = sa.Column(sa.String(120))
     is_active = sa.Column(sa.Boolean, nullable=False, default=True)
+    last_login = sa.Column(sa.DateTime, nullable=True)
     scopes = orm.relationship("Scope", secondary=user_scopes)
 
     def __str__(self):
