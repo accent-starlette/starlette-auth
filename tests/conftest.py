@@ -21,6 +21,8 @@ starlette_auth.config.login_template = "form.html"
 starlette_auth.config.change_pw_template = "form.html"
 starlette_auth.config.reset_pw_template = "form.html"
 starlette_auth.config.reset_pw_done_template = "thanks.html"
+starlette_auth.config.reset_pw_email_subject_template = "password_reset_subject.txt"
+starlette_auth.config.reset_pw_email_template = "password_reset_body.txt"
 
 url = DatabaseURL("sqlite://")
 db = Database(url)

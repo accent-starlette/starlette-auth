@@ -110,6 +110,10 @@ class PasswordReset(HTTPEndpoint):
             context = {"request": request, "form": form}
             return config.templates.TemplateResponse(template, context)
 
+        user = User.query.filter(User.email == form.email.data).one_or_none()
+        if user and user.is_active:
+            await form.send_email(request)
+
         return RedirectResponse(
             url=config.reset_pw_redirect_url, status_code=status.HTTP_302_FOUND
         )
