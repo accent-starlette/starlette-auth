@@ -19,6 +19,7 @@ starlette_auth.config.templates = Jinja2Templates(
 )
 starlette_auth.config.login_template = "form.html"
 starlette_auth.config.change_pw_template = "form.html"
+starlette_auth.config.reset_pw_template = "form.html"
 
 url = DatabaseURL("sqlite://")
 db = Database(url)

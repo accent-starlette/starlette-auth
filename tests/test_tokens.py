@@ -37,21 +37,17 @@ def test_timeout(user):
     p0 = PasswordResetTokenGenerator()
     tk1 = p0.make_token(user)
 
-    p1 = Mocked(datetime.utcnow() + timedelta(seconds=config.password_reset_timeout))
+    p1 = Mocked(datetime.utcnow() + timedelta(seconds=config.reset_pw_timeout))
     assert p1.check_token(user, tk1)
 
-    p2 = Mocked(
-        datetime.utcnow() + timedelta(seconds=(config.password_reset_timeout + 1))
-    )
+    p2 = Mocked(datetime.utcnow() + timedelta(seconds=(config.reset_pw_timeout + 1)))
     assert not p2.check_token(user, tk1)
 
-    config.password_reset_timeout = 60 * 60
+    config.reset_pw_timeout = 60 * 60
 
-    p3 = Mocked(datetime.utcnow() + timedelta(seconds=config.password_reset_timeout))
+    p3 = Mocked(datetime.utcnow() + timedelta(seconds=config.reset_pw_timeout))
     assert p3.check_token(user, tk1)
-    p4 = Mocked(
-        datetime.utcnow() + timedelta(seconds=(config.password_reset_timeout + 1))
-    )
+    p4 = Mocked(datetime.utcnow() + timedelta(seconds=(config.reset_pw_timeout + 1)))
     assert not p4.check_token(user, tk1)
 
 

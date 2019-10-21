@@ -7,7 +7,7 @@ from starlette.endpoints import HTTPEndpoint
 from starlette.responses import RedirectResponse
 
 from .config import config
-from .forms import ChangePasswordForm, LoginForm
+from .forms import ChangePasswordForm, LoginForm, PasswordResetForm
 from .tables import User
 
 
@@ -90,3 +90,15 @@ class Logout(HTTPEndpoint):
         return RedirectResponse(
             url=config.logout_redirect_url, status_code=status.HTTP_302_FOUND
         )
+
+
+class PasswordReset(HTTPEndpoint):
+    async def get(self, request):
+        template = config.reset_pw_template
+
+        form = PasswordResetForm()
+        context = {"request": request, "form": form}
+        return config.templates.TemplateResponse(template, context)
+
+    async def post(self, request):
+        pass

@@ -6,7 +6,7 @@ def test_get(client, user):
         "/auth/login", data={"email": "user@example.com", "password": "password"}
     )
 
-    response = client.get("/auth/change-password")
+    response = client.get("/auth/password/change")
     assert response.status_code == 200
 
 
@@ -15,7 +15,7 @@ def test_get_requires_login(client):
         "/auth/login", data={"email": "user@example.com", "password": "password"}
     )
 
-    response = client.get("/auth/change-password")
+    response = client.get("/auth/password/change")
     assert response.status_code == 403
 
 
@@ -25,7 +25,7 @@ def test_can_change_password(client, user):
     )
 
     response = client.post(
-        "/auth/change-password",
+        "/auth/password/change",
         data={
             "current_password": "password",
             "new_password": "password1",
@@ -68,6 +68,6 @@ def test_invalid(test_data, client, user):
         "/auth/login", data={"email": "user@example.com", "password": "password"}
     )
 
-    response = client.post("/auth/change-password", data=test_data)
+    response = client.post("/auth/password/change", data=test_data)
     assert response.status_code == 200
-    assert response.url == "http://testserver/auth/change-password"
+    assert response.url == "http://testserver/auth/password/change"

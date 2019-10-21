@@ -21,3 +21,12 @@ class LoginForm(form.Form):
         ]
     )
     password = fields.PasswordField(validators=[validators.DataRequired()])
+
+
+class PasswordResetForm(form.Form):
+    email = EmailField(
+        validators=[
+            validators.DataRequired(),
+            validators.Email(message="Must be a valid email."),
+        ]
+    )

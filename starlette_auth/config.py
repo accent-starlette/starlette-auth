@@ -8,7 +8,8 @@ class AppConfig:
     login_redirect_url = "/"
     login_template = "starlette_auth/login.html"
     logout_redirect_url = "/"
-    password_reset_timeout = 60
+    reset_pw_template = "starlette_auth/password_reset.html"
+    reset_pw_timeout = 60
     secret_key = ""
 
 

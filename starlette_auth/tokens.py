@@ -42,7 +42,7 @@ class PasswordResetTokenGenerator:
             return False
 
         # Check the timestamp is within limit.
-        if (self._num_seconds(self._now()) - ts) > config.password_reset_timeout:
+        if (self._num_seconds(self._now()) - ts) > config.reset_pw_timeout:
             return False
 
         return True
@@ -69,7 +69,7 @@ class PasswordResetTokenGenerator:
            same password is chosen, due to password salting).
         2. The last_login field will usually be updated very shortly after
            a password reset.
-        Failing those things, config.password_reset_timeout eventually
+        Failing those things, config.reset_pw_timeout eventually
         invalidates the token.
         Running this data through salted_hmac() prevents password cracking
         attempts using the reset token, provided the secret isn't compromised.
