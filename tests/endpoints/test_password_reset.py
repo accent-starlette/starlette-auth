@@ -38,13 +38,30 @@ def test_email_not_sent_if_user_is_not_active(client, user, monkeypatch):
     assert response.next.url == "http://testserver/auth/password/reset/done"
 
 
-def test_email_sent_if_user_exists(client, user, monkeypatch):
+def test_txt_email_sent_if_user_exists(client, user, monkeypatch):
     def fake_send(msg):
+        assert msg.get_content_maintype() == "text"
         assert msg["To"] == user.email
         assert msg["Subject"] == "Change Password at example.com"
         assert "http://testserver/auth/password/reset" in msg.as_string()
 
     monkeypatch.setattr("starlette_auth.forms.send_message", fake_send)
+
+    response = client.post("/auth/password/reset", data={"email": user.email})
+    assert response.status_code == 302
+    assert response.next.url == "http://testserver/auth/password/reset/done"
+
+
+def test_html_email_sent_if_template_is_defined(client, user, monkeypatch):
+    def fake_send(msg):
+        assert msg.get_content_maintype() == "multipart"
+        assert msg["To"] == user.email
+        assert msg["Subject"] == "Change Password at example.com"
+        assert '<a href="http://testserver/auth/password/reset' in msg.as_string()
+
+    monkeypatch.setattr("starlette_auth.forms.send_message", fake_send)
+
+    config.reset_pw_html_email_template = "password_reset_body.html"
 
     response = client.post("/auth/password/reset", data={"email": user.email})
     assert response.status_code == 302

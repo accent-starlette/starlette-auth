@@ -65,6 +65,11 @@ class PasswordResetForm(form.Form):
         msg["Subject"] = subject
         msg.set_content(body)
 
+        if config.reset_pw_html_email_template:
+            html_body_tmpl = templates.get_template(config.reset_pw_html_email_template)
+            html_body = html_body_tmpl.render(context)
+            msg.add_alternative(html_body, subtype="html")
+
         send_message(msg)
 
 

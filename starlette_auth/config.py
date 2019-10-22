@@ -17,6 +17,7 @@ class AppConfig:
     reset_pw_complete_template: str = "starlette_auth/password_reset_complete.html"
     reset_pw_email_subject_template: str = ""
     reset_pw_email_template: str = ""
+    reset_pw_html_email_template: str = ""
     reset_pw_timeout: int = 60 * 60 * 24 * 3
     secret_key: typing.Union[str, Secret] = ""
 
