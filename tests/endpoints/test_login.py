@@ -18,6 +18,15 @@ def test_can_login(client, user):
     assert response.json() == {"user": "user@example.com"}
 
 
+def test_user_last_login_set(client, user):
+    assert user.last_login is None
+    response = client.post(
+        "/auth/login", data={"email": "user@example.com", "password": "password"}
+    )
+    user.refresh_from_db()
+    assert user.last_login is not None
+
+
 @pytest.mark.parametrize(
     "test_data",
     [

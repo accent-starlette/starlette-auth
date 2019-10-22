@@ -1,12 +1,22 @@
+from datetime import datetime
+
 from sqlalchemy.orm.exc import NoResultFound
 from starlette import status
 from starlette.authentication import requires
 from starlette.endpoints import HTTPEndpoint
+from starlette.exceptions import HTTPException
 from starlette.responses import RedirectResponse
 
 from .config import config
-from .forms import ChangePasswordForm, LoginForm
+from .forms import (
+    ChangePasswordForm,
+    LoginForm,
+    PasswordResetConfirmForm,
+    PasswordResetForm,
+)
 from .tables import User
+from .tokens import token_generator
+from .utils.http import urlsafe_base64_decode
 
 
 class ChangePassword(HTTPEndpoint):
@@ -65,6 +75,8 @@ class Login(HTTPEndpoint):
             user = User.query.filter(User.email == form.email.data.lower()).one()
             if user.check_password(form.password.data):
                 request.session["user"] = user.id
+                user.last_login = datetime.utcnow()
+                user.save()
                 return RedirectResponse(
                     url=config.login_redirect_url, status_code=status.HTTP_302_FOUND
                 )
@@ -86,3 +98,105 @@ class Logout(HTTPEndpoint):
         return RedirectResponse(
             url=config.logout_redirect_url, status_code=status.HTTP_302_FOUND
         )
+
+
+class PasswordReset(HTTPEndpoint):
+    async def get(self, request):
+        template = config.reset_pw_template
+
+        form = PasswordResetForm()
+        context = {"request": request, "form": form}
+        return config.templates.TemplateResponse(template, context)
+
+    async def post(self, request):
+        template = config.reset_pw_template
+
+        data = await request.form()
+        form = PasswordResetForm(data)
+
+        if not form.validate():
+            context = {"request": request, "form": form}
+            return config.templates.TemplateResponse(template, context)
+
+        user = User.query.filter(User.email == form.email.data).one_or_none()
+        if user and user.is_active:
+            await form.send_email(request)
+
+        return RedirectResponse(
+            request.url_for("auth:password_reset_done"),
+            status_code=status.HTTP_302_FOUND,
+        )
+
+
+class PasswordResetDone(HTTPEndpoint):
+    async def get(self, request):
+        template = config.reset_pw_done_template
+
+        context = {"request": request}
+        return config.templates.TemplateResponse(template, context)
+
+
+class PasswordResetConfirm(HTTPEndpoint):
+    def get_user(self, uidb64):
+        try:
+            uid = urlsafe_base64_decode(uidb64).decode()
+            user = User.query.get(uid)
+        except:
+            user = None
+        return user
+
+    def check_token(self, user, uidb64, token) -> bool:
+        if not user or not user.is_active:
+            return False
+        if not token_generator.check_token(user, token):
+            return False
+        return True
+
+    async def get(self, request):
+        template = config.reset_pw_confirm_template
+
+        uidb64 = request.path_params["uidb64"]
+        token = request.path_params["token"]
+
+        user = self.get_user(uidb64)
+
+        if not self.check_token(user, uidb64, token):
+            raise HTTPException(status_code=404)
+
+        form = PasswordResetConfirmForm()
+        context = {"request": request, "form": form}
+        return config.templates.TemplateResponse(template, context)
+
+    async def post(self, request):
+        template = config.reset_pw_confirm_template
+
+        uidb64 = request.path_params["uidb64"]
+        token = request.path_params["token"]
+
+        user = self.get_user(uidb64)
+
+        if not self.check_token(user, uidb64, token):
+            raise HTTPException(status_code=404)
+
+        data = await request.form()
+        form = PasswordResetConfirmForm(data)
+
+        if not form.validate():
+            context = {"request": request, "form": form}
+            return config.templates.TemplateResponse(template, context)
+
+        user.set_password(form.new_password.data)
+        user.save()
+
+        return RedirectResponse(
+            url=request.url_for("auth:password_reset_complete"),
+            status_code=status.HTTP_302_FOUND,
+        )
+
+
+class PasswordResetComplete(HTTPEndpoint):
+    async def get(self, request):
+        template = config.reset_pw_complete_template
+
+        context = {"request": request}
+        return config.templates.TemplateResponse(template, context)
