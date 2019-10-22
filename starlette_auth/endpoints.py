@@ -161,7 +161,7 @@ class PasswordResetConfirm(HTTPEndpoint):
         user = self.get_user(uidb64)
 
         if not self.check_token(user, uidb64, token):
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         form = PasswordResetConfirmForm()
         context = {"request": request, "form": form}
@@ -176,7 +176,7 @@ class PasswordResetConfirm(HTTPEndpoint):
         user = self.get_user(uidb64)
 
         if not self.check_token(user, uidb64, token):
-            raise HTTPException(status_code=404)
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND)
 
         data = await request.form()
         form = PasswordResetConfirmForm(data)
