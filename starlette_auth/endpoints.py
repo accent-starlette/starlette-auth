@@ -145,6 +145,13 @@ class PasswordResetConfirm(HTTPEndpoint):
             user = None
         return user
 
+    def check_token(self, user, uidb64, token) -> bool:
+        if not user or not user.is_active:
+            return False
+        if not token_generator.check_token(user, token):
+            return False
+        return True
+
     async def get(self, request):
         template = config.reset_pw_confirm_template
 
@@ -153,10 +160,7 @@ class PasswordResetConfirm(HTTPEndpoint):
 
         user = self.get_user(uidb64)
 
-        if not user or not user.is_active:
-            raise HTTPException(status_code=404)
-
-        if not token_generator.check_token(user, token):
+        if not self.check_token(user, uidb64, token):
             raise HTTPException(status_code=404)
 
         form = PasswordResetConfirmForm()
@@ -171,10 +175,7 @@ class PasswordResetConfirm(HTTPEndpoint):
 
         user = self.get_user(uidb64)
 
-        if not user or not user.is_active:
-            raise HTTPException(status_code=404)
-
-        if not token_generator.check_token(user, token):
+        if not self.check_token(user, uidb64, token):
             raise HTTPException(status_code=404)
 
         data = await request.form()
