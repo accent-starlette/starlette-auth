@@ -1,0 +1,16 @@
+site_name: Starlette Auth
+site_description: Starlette Auth Documentation.
+
+theme:
+    name: 'material'
+
+repo_name: accent-starlette/starlette-auth
+repo_url: https://github.com/accent-starlette/starlette-auth
+edit_uri: ""
+
+nav:
+    - Introduction: 'index.md'
+
+markdown_extensions:
+  - markdown.extensions.codehilite:
+      guess_lang: false
