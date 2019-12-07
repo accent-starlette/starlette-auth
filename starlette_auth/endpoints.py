@@ -74,7 +74,7 @@ class Login(HTTPEndpoint):
         try:
             user = User.query.filter(User.email == form.email.data.lower()).one()
             if user.check_password(form.password.data):
-                request.session["user"] = user.id
+                request.session["user"] = str(user.id)
                 user.last_login = datetime.utcnow()
                 user.save()
                 return RedirectResponse(
