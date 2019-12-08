@@ -10,8 +10,8 @@ from starlette_core.database import Base
 user_scopes = sa.Table(
     "userscope",
     Base.metadata,
-    sa.Column("user_id", sa.Integer, sa.ForeignKey("user.id")),
-    sa.Column("scope_id", sa.Integer, sa.ForeignKey("scope.id")),
+    sa.Column("user_id", Base.id.type, sa.ForeignKey("user.id"), primary_key=True),
+    sa.Column("scope_id", Base.id.type, sa.ForeignKey("scope.id"), primary_key=True),
 )
 
 

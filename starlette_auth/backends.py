@@ -12,7 +12,10 @@ class ModelAuthBackend(AuthenticationBackend):
     def get_user(self, conn: HTTPConnection):
         user_id = conn.session.get("user")
         if user_id:
-            return User.query.get(user_id)
+            try:
+                return User.query.get(user_id)
+            except:
+                conn.session.pop("user")
 
     async def authenticate(self, conn: HTTPConnection):
         user = self.get_user(conn)
