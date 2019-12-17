@@ -146,11 +146,9 @@ class PasswordResetConfirm(HTTPEndpoint):
         return user
 
     def check_token(self, user, uidb64, token) -> bool:
-        if not user or not user.is_active:
+        if not (user and user.is_active):
             return False
-        if not token_generator.check_token(user, token):
-            return False
-        return True
+        return bool(token_generator.check_token(user, token))
 
     async def get(self, request):
         template = config.reset_pw_confirm_template

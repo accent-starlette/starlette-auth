@@ -42,10 +42,7 @@ class PasswordResetTokenGenerator:
             return False
 
         # Check the timestamp is within limit.
-        if (self._num_seconds(self._now()) - ts) > config.reset_pw_timeout:
-            return False
-
-        return True
+        return self._num_seconds(self._now()) - ts <= config.reset_pw_timeout
 
     def _make_token_with_timestamp(self, user, timestamp):
         # timestamp is number of seconds since 2001-1-1. Converted to base 36,
