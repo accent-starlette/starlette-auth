@@ -74,7 +74,7 @@ class PasswordResetForm(form.Form):
         body_tmpl = templates.get_template(config.reset_pw_email_template)
         body = body_tmpl.render(context)
 
-        msg["To"] = [self.data["email"]]
+        msg["To"] = [user.email]
         msg["Subject"] = subject
         msg.set_content(body)
 
