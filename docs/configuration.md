@@ -2,67 +2,102 @@
 
 There are several parts of the package that require config options.
 
-Configuration should be stored in environment variables, or in a ".env" file that is not committed to source control.
+Configuration can either be stored in environment variables or set directly within the package.
 
-Please refer to [docs](https://github.com/accent-starlette/starlette-auth/blob/master/starlette_auth/config.py) on how to set this up within a config.py file as per example:
+## Templates
+
+These are the paths that are used to the templates.
+
+```bash
+# the below are the defaults
+LOGIN_TEMPLATE="starlette_auth/login.html"
+CHANGE_PW_TEMPLATE="starlette_auth/change_password.html"
+RESET_PW_TEMPLATE="starlette_auth/password_reset.html"
+RESET_PW_DONE_TEMPLATE="starlette_auth/password_reset_done.html"
+RESET_PW_CONFIRM_TEMPLATE="starlette_auth/password_reset_confirm.html"
+RESET_PW_COMPLETE_TEMPLATE="starlette_auth/password_reset_complete.html"
+RESET_PW_EMAIL_SUBJECT_TEMPLATE="starlette_auth/password_reset_subject.txt"
+RESET_PW_EMAIL_TEMPLATE="starlette_auth/password_reset_body.txt"
+
+# only required for html email
+RESET_PW_HTML_EMAIL_TEMPLATE="starlette_auth/password_reset_body.html"
+```
+
+If you don't want to set these as environment variables you can also define them in code.
 
 ```python
+from starlette_auth import config
 
-import typing
+config.login_template = ...
+config.change_pw_template = ...
+config.reset_pw_template = ...
+config.reset_pw_done_template = ...
+config.reset_pw_confirm_template = ...
+config.reset_pw_complete_template = ...
+config.reset_pw_email_subject_template = ...
+config.reset_pw_email_template = ...
+config.reset_pw_html_email_template = ...
 
-from starlette.config import Config
-from starlette.datastructures import Secret
-from starlette.templating import Jinja2Templates
+app = Starlette()
+```
 
+So that the package can load your templates you also need to specify the `templates` variable:
 
-class AppConfig:
-    _config = Config(".env")
+```python
+import jinja2
+from starlette_auth import config
+from starlette_core.templating import Jinja2Templates
 
-    # templating configuration
-    templates: Jinja2Templates = Jinja2Templates(directory="templates")
-    change_pw_template: str = _config(
-        "CHANGE_PW_TEMPLATE", default="starlette_auth/change_password.html"
-    )
-    login_template: str = _config("LOGIN_TEMPLATE", default="starlette_auth/login.html")
-    reset_pw_template: str = _config(
-        "RESET_PW_TEMPLATE", default="starlette_auth/password_reset.html"
-    )
-    reset_pw_done_template: str = _config(
-        "RESET_PW_DONE_TEMPLATE", default="starlette_auth/password_reset_done.html"
-    )
-    reset_pw_confirm_template: str = _config(
-        "RESET_PW_CONFIRM_TEMPLATE",
-        default="starlette_auth/password_reset_confirm.html",
-    )
-    reset_pw_complete_template: str = _config(
-        "RESET_PW_COMPLETE_TEMPLATE",
-        default="starlette_auth/password_reset_complete.html",
-    )
+templates = Jinja2Templates(loader=jinja2.FileSystemLoader("templates"))
 
-    # email templating configuration
-    reset_pw_email_subject_template: str = _config(
-        "RESET_PW_EMAIL_SUBJECT_TEMPLATE", default=""
-    )
-    reset_pw_email_template: str = _config("RESET_PW_EMAIL_TEMPLATE", default="")
-    reset_pw_html_email_template: str = _config(
-        "RESET_PW_HTML_EMAIL_TEMPLATE", default=""
-    )
+config.templates = templates
 
-    # url configuration
-    change_pw_redirect_url: str = _config("CHANGE_PW_REDIRECT_URL", default="/")
-    login_redirect_url: str = _config("LOGIN_REDIRECT_URL", default="/")
-    logout_redirect_url: str = _config("LOGOUT_REDIRECT_URL", default="/")
+app = Starlette()
+```
 
-    # general
-    reset_pw_timeout: int = _config(
-        "RESET_PW_TIMEOUT", cast=int, default=(60 * 60 * 24 * 3)
-    )
-    secret_key: typing.Union[str, Secret] = _config(
-        "SECRET_KEY", cast=Secret, default=""
-    )
+## Routing
 
+The below are a list of redirect urls:
 
-config = AppConfig()
+```bash
+# below are the defaults
+LOGIN_REDIRECT_URL="/"
+LOGOUT_REDIRECT_URL="/"
+CHANGE_PW_REDIRECT_URL="/"
+```
 
+or directly in python:
 
+```python
+from starlette_auth import config
+
+config.login_redirect_url = ...
+config.logout_redirect_url = ...
+config.change_pw_redirect_url = ...
+
+app = Starlette()
+```
+
+## General
+
+The below are a list of other variables:
+
+```bash
+# used to make pw reset urls invalid after x seconds
+# default 3 days = 60 * 60 * 24 * 3
+RESET_PW_TIMEOUT="86400"
+# used to create pw reset urls
+# default = ""
+SECRET_KEY="some-secret-key"
+```
+
+or directly in python:
+
+```python
+from starlette_auth import config
+
+config.reset_pw_timeout = ...
+config.secret_key = ...
+
+app = Starlette()
 ```
