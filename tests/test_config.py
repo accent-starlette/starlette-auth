@@ -14,8 +14,11 @@ def test_defaults():
         config.reset_pw_complete_template
         == "starlette_auth/password_reset_complete.html"
     )
-    assert config.reset_pw_email_subject_template == ""
-    assert config.reset_pw_email_template == ""
+    assert (
+        config.reset_pw_email_subject_template
+        == "starlette_auth/password_reset_subject.txt"
+    )
+    assert config.reset_pw_email_template == "starlette_auth/password_reset_body.txt"
     assert config.reset_pw_html_email_template == ""
     assert config.change_pw_redirect_url == "/"
     assert config.login_redirect_url == "/"

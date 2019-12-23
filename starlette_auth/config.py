@@ -31,9 +31,12 @@ class AppConfig:
 
     # email templating configuration
     reset_pw_email_subject_template: str = _config(
-        "RESET_PW_EMAIL_SUBJECT_TEMPLATE", default=""
+        "RESET_PW_EMAIL_SUBJECT_TEMPLATE",
+        default="starlette_auth/password_reset_subject.txt",
     )
-    reset_pw_email_template: str = _config("RESET_PW_EMAIL_TEMPLATE", default="")
+    reset_pw_email_template: str = _config(
+        "RESET_PW_EMAIL_TEMPLATE", default="starlette_auth/password_reset_body.txt"
+    )
     reset_pw_html_email_template: str = _config(
         "RESET_PW_HTML_EMAIL_TEMPLATE", default=""
     )

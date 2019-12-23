@@ -10,6 +10,10 @@ edit_uri: ""
 
 nav:
     - Introduction: 'index.md'
+    - Setup: 'setup.md'
+    - Templating: 'templating.md'
+    - Configuration: 'configuration.md'
+    - The User Class: 'user.md'
 
 markdown_extensions:
   - markdown.extensions.codehilite:
