@@ -65,6 +65,7 @@ setup(
     packages=get_packages(package_name),
     package_data=get_package_data(package_name),
     install_requires=[
+        'email-validator',
         'itsdangerous',
         'jinja2',
         'python-multipart',
