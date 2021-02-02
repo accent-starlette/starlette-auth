@@ -1,3 +1,5 @@
+import pytest
+from httpx import AsyncClient
 from starlette.authentication import requires
 from starlette.responses import JSONResponse
 
@@ -24,46 +26,49 @@ def write(request):
     return JSONResponse({"status": "ok"})
 
 
-def test_scoped_endpoints(client, user):
+@pytest.mark.asyncio
+async def test_scoped_endpoints(app, user):
     read_scope = Scope(code="read")
     write_scope = Scope(code="write")
 
-    read_scope.save()
-    write_scope.save()
+    await read_scope.save()
+    await write_scope.save()
 
-    client.app.add_route("/unauthed", unauthed)
-    client.app.add_route("/authed", authed)
-    client.app.add_route("/read", read)
-    client.app.add_route("/write", write)
+    app.add_route("/unauthed", unauthed)
+    app.add_route("/authed", authed)
+    app.add_route("/read", read)
+    app.add_route("/write", write)
 
-    assert client.get("/unauthed").status_code == 200
-    assert client.get("/authed").status_code == 403
-    assert client.get("/read").status_code == 403
-    assert client.get("/write").status_code == 403
+    async with AsyncClient(app=app, base_url="http://testserver") as client:
+        assert (await client.get("/unauthed")).status_code == 200
+        assert (await client.get("/authed")).status_code == 403
+        assert (await client.get("/read")).status_code == 403
+        assert (await client.get("/write")).status_code == 403
 
-    login = client.post(
-        "/auth/login", data={"email": "user@example.com", "password": "password"}
-    )
+        login = await client.post(
+            "/auth/login", data={"email": "user@example.com", "password": "password"}
+        )
 
-    assert login.status_code == 302
+        assert login.status_code == 200
+        assert login.url == "http://testserver/"
 
-    assert client.get("/unauthed").status_code == 403
-    assert client.get("/authed").status_code == 200
-    assert client.get("/read").status_code == 403
-    assert client.get("/write").status_code == 403
+        assert (await client.get("/unauthed")).status_code == 403
+        assert (await client.get("/authed")).status_code == 200
+        assert (await client.get("/read")).status_code == 403
+        assert (await client.get("/write")).status_code == 403
 
-    user.scopes.append(read_scope)
-    user.save()
+        user.scopes.append(read_scope)
+        await user.save()
 
-    assert client.get("/unauthed").status_code == 403
-    assert client.get("/authed").status_code == 200
-    assert client.get("/read").status_code == 200
-    assert client.get("/write").status_code == 403
+        assert (await client.get("/unauthed")).status_code == 403
+        assert (await client.get("/authed")).status_code == 200
+        assert (await client.get("/read")).status_code == 200
+        assert (await client.get("/write")).status_code == 403
 
-    user.scopes.append(write_scope)
-    user.save()
+        user.scopes.append(write_scope)
+        await user.save()
 
-    assert client.get("/unauthed").status_code == 403
-    assert client.get("/authed").status_code == 200
-    assert client.get("/read").status_code == 200
-    assert client.get("/write").status_code == 200
+        assert (await client.get("/unauthed")).status_code == 403
+        assert (await client.get("/authed")).status_code == 200
+        assert (await client.get("/read")).status_code == 200
+        assert (await client.get("/write")).status_code == 200

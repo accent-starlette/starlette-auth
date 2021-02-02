@@ -1,5 +1,4 @@
 import sqlalchemy as sa
-from sqlalchemy_utils import EmailType
 from starlette_core.testing import assert_model_field
 
 from starlette_auth.tables import User
@@ -13,7 +12,7 @@ data = {
 
 
 def test_fields():
-    assert_model_field(User, "email", EmailType, False, True, True, 255)
+    assert_model_field(User, "email", sa.String, False, True, True, 255)
     assert_model_field(User, "first_name", sa.String, True, False, False, 120)
     assert_model_field(User, "last_name", sa.String, True, False, False, 120)
     assert_model_field(User, "is_active", sa.Boolean, False, False, False)

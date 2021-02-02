@@ -1,5 +1,7 @@
 from datetime import datetime, timedelta
 
+import pytest
+
 from starlette_auth import config
 from starlette_auth.tables import User
 from starlette_auth.tokens import PasswordResetTokenGenerator
@@ -12,11 +14,12 @@ def test_make_token(user):
     assert p0.check_token(user, tk1)
 
 
-def test_10265(user):
+@pytest.mark.asyncio
+async def test_10265(user):
     config.secret_key = "some-secret-key"
     p0 = PasswordResetTokenGenerator()
     tk1 = p0.make_token(user)
-    reload = User.query.get(user.id)
+    reload = await User.get(user.id)
     tk2 = p0.make_token(reload)
     assert tk1 == tk2
 

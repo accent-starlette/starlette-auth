@@ -4,7 +4,6 @@ import os
 
 import sqlalchemy as sa
 from sqlalchemy import orm
-from sqlalchemy_utils import EmailType
 from starlette_core.database import Base
 
 user_scopes = sa.Table(
@@ -16,7 +15,7 @@ user_scopes = sa.Table(
 
 
 class User(Base):
-    email = sa.Column(EmailType, nullable=False, index=True, unique=True)
+    email = sa.Column(sa.String(255), nullable=False, index=True, unique=True)
     password = sa.Column(sa.String(255))
     first_name = sa.Column(sa.String(120))
     last_name = sa.Column(sa.String(120))

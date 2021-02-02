@@ -1,13 +1,16 @@
+from typing import AsyncIterator
+
 import jinja2
 import pytest
-from sqlalchemy_utils import create_database, database_exists, drop_database
+from asgi_lifespan import LifespanManager
+from httpx import AsyncClient
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.middleware.authentication import AuthenticationMiddleware
 from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
-from starlette_core.database import Database, DatabaseURL, Session
+from starlette_core.database import Database, DatabaseURL
 from starlette_core.templating import Jinja2Templates
 
 import starlette_auth
@@ -30,37 +33,27 @@ url = DatabaseURL("sqlite://")
 db = Database(url)
 
 
-@pytest.fixture(scope="session", autouse=True)
-def database():
-    if database_exists(str(url)):
-        drop_database(str(url))
-
-    create_database(str(url))
-
-    db.drop_all()
-    db.create_all()
-
+@pytest.fixture(scope="function", autouse=True)
+async def database():
+    await db.create_all()
     return db
 
 
-@pytest.yield_fixture(scope="function", autouse=True)
-def session():
-    db_session = Session()
-    yield db_session
-    db.truncate_all(True)
+@pytest.fixture(scope="function", autouse=True)
+async def cleanup():
+    await db.truncate_all(True)
 
 
 @pytest.fixture(scope="function")
-def user():
+async def user():
     test_user = User(email="user@example.com")
     test_user.set_password("password")
-    test_user.save()
-
+    await test_user.save()
     return test_user
 
 
-@pytest.yield_fixture(scope="function")
-def client():
+@pytest.fixture()
+def app():
     @requires(["authenticated"], redirect="auth:login")
     def home(request):
         return JSONResponse({"user": request.user.email})
@@ -73,5 +66,11 @@ def client():
     app.add_middleware(SessionMiddleware, secret_key="secret")
     app.add_route("/", home)
 
-    with TestClient(app) as client:
-        yield client
+    return app
+
+
+@pytest.fixture()
+async def client(app) -> AsyncIterator[AsyncClient]:
+    async with LifespanManager(app):
+        async with AsyncClient(app=app, base_url="http://testserver") as ac:
+            yield ac

@@ -1,5 +1,6 @@
 from email.message import EmailMessage
 
+import sqlalchemy as sa
 from starlette.requests import Request
 from starlette_core.mail import send_message
 from wtforms import fields, form, validators
@@ -43,8 +44,9 @@ class PasswordResetForm(form.Form):
     async def send_email(self, request: Request):
         from . import config
 
-        user = User.query.filter(User.email == self.data["email"]).one_or_none()
-
+        qs = sa.select(User).where(User.email == self.data["email"])
+        result = await User.session.execute(qs)
+        user = result.scalars().first()
         if not user:
             return
 

@@ -3,10 +3,16 @@
 -e .
 
 # Testing
+asgi-lifespan
 autoflake
 black
+httpx
 isort
 mypy
 pytest
+pytest-asyncio
 pytest-cov
 requests
+
+# example
+uvicorn

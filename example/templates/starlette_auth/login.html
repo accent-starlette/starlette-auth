@@ -1,0 +1,11 @@
+<body>
+<p>Please login to get started.</p>
+<form method="POST">
+{% for field in form %}
+    {{ field.label }}
+    {{ field }}
+    {% if field.errors %}<cite>{{ field.errors|join(' ') }}</cite>{% endif %}
+{% endfor %}
+<button type="submit">Submit</button>
+</form>
+</body>

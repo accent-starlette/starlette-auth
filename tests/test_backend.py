@@ -10,17 +10,17 @@ from starlette_auth.tables import User
 
 
 class AuthenticatedBackend(ModelAuthBackend):
-    def get_user(self, conn):
+    async def get_user(self, conn):
         return User(first_name="tom", last_name="jones", is_active=True)
 
 
 class InactiveBackend(ModelAuthBackend):
-    def get_user(self, conn):
+    async def get_user(self, conn):
         return User(first_name="tom", last_name="jones", is_active=False)
 
 
 class NoUserBackend(ModelAuthBackend):
-    def get_user(self, conn):
+    async def get_user(self, conn):
         pass
 
 
