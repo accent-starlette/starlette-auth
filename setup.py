@@ -70,7 +70,10 @@ setup(
         'jinja2',
         'python-multipart',
         'sqlalchemy_utils',
-        'starlette-core @ git+https://github.com/accent-starlette/starlette-core@master'
+        'starlette-core'
+    ],
+    dependency_links=[
+        'git+ssh://git@github.com/accent-starlette/starlette-core.git#egg=starlette-core-0.0.1'
     ],
     extras_require={
         "docs": [
