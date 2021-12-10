@@ -3,7 +3,7 @@ from email.message import EmailMessage
 from starlette.requests import Request
 from starlette_core.mail import send_message
 from wtforms import fields, form, validators
-from wtforms.fields.html5 import EmailField
+from wtforms.fields import EmailField
 
 from .exceptions import ImproperlyConfigured
 from .tables import User
