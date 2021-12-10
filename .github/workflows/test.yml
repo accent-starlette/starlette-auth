@@ -20,7 +20,7 @@ jobs:
         architecture: x64
 
     - name: Install Dependencies
-      run: pip install -r requirements.txt
+      run: pip install --upgrade pip && pip install -r requirements.txt
 
     - name: Run Linting and Tests
       run: scripts/test

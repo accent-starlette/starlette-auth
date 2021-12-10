@@ -4,13 +4,13 @@ from sqlalchemy_utils import create_database, database_exists, drop_database
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
 from starlette_core.database import Database, DatabaseURL, Session
 from starlette_core.templating import Jinja2Templates
 
 import starlette_auth
+from starlette_auth.middleware import SessionMiddleware
 from starlette_auth.tables import User
 
 # basic config for auth app
@@ -26,8 +26,8 @@ starlette_auth.config.reset_pw_email_template = "password_reset_body.txt"
 starlette_auth.config.reset_pw_confirm_template = "form.html"
 starlette_auth.config.reset_pw_complete_template = "thanks.html"
 
-url = DatabaseURL("sqlite://")
-db = Database(url)
+url = DatabaseURL("sqlite:///./db.sqlite")
+db = Database(url, engine_kwargs={"connect_args": {"check_same_thread": False}})
 
 
 @pytest.fixture(scope="session", autouse=True)
@@ -43,10 +43,11 @@ def database():
     return db
 
 
-@pytest.yield_fixture(scope="function", autouse=True)
+@pytest.fixture(scope="function", autouse=True)
 def session():
     db_session = Session()
     yield db_session
+    Session.remove()
     db.truncate_all(True)
 
 
@@ -59,19 +60,19 @@ def user():
     return test_user
 
 
-@pytest.yield_fixture(scope="function")
+@pytest.fixture(scope="function")
 def client():
     @requires(["authenticated"], redirect="auth:login")
     def home(request):
         return JSONResponse({"user": request.user.email})
 
-    app = Starlette()
+    app = Starlette(debug=True)
     app.mount(path="/auth", app=starlette_auth.app, name="auth")
     app.add_middleware(
         AuthenticationMiddleware, backend=starlette_auth.backends.ModelAuthBackend()
     )
-    app.add_middleware(SessionMiddleware, secret_key="secret")
+    app.add_middleware(SessionMiddleware, secret_key="secret", cookie_path="/")
     app.add_route("/", home)
 
-    with TestClient(app) as client:
+    with TestClient(app, base_url="http://testserver") as client:
         yield client

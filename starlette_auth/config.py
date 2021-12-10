@@ -1,5 +1,3 @@
-import typing
-
 from starlette.config import Config
 from starlette.datastructures import Secret
 from starlette.templating import Jinja2Templates
@@ -50,9 +48,7 @@ class AppConfig:
     reset_pw_timeout: int = _config(
         "RESET_PW_TIMEOUT", cast=int, default=(60 * 60 * 24 * 3)
     )
-    secret_key: typing.Union[str, Secret] = _config(
-        "SECRET_KEY", cast=Secret, default=""
-    )
+    secret_key = _config("SECRET_KEY", cast=Secret, default="")
 
 
 config = AppConfig()

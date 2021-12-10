@@ -57,7 +57,7 @@ def test_html_email_sent_if_template_is_defined(client, user, monkeypatch):
         assert msg.get_content_maintype() == "multipart"
         assert msg["To"] == user.email
         assert msg["Subject"] == "Change Password at example.com"
-        assert '<a href="http://testserver/auth/password/reset' in msg.as_string()
+        assert "http://testserver/auth/password/reset" in msg.as_string()
 
     monkeypatch.setattr("starlette_auth.forms.send_message", fake_send)
 

@@ -29,14 +29,14 @@ from starlette_auth import tables
 
 ## Middleware
 
-Add both starlette's `AuthenticationMiddleware` and `SessionMiddleware`:
+Add both `AuthenticationMiddleware` and `SessionMiddleware`:
 
 ```python
 from starlette.applications import Starlette
 from starlette.middleware import Middleware
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from starlette_auth import ModelAuthBackend
+from starlette_auth.middleware import SessionMiddleware
 
 middleware = [
     ...

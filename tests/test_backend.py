@@ -1,11 +1,11 @@
 from starlette.applications import Starlette
 from starlette.authentication import requires
 from starlette.middleware.authentication import AuthenticationMiddleware
-from starlette.middleware.sessions import SessionMiddleware
 from starlette.responses import JSONResponse
 from starlette.testclient import TestClient
 
 from starlette_auth.backends import ModelAuthBackend
+from starlette_auth.middleware import SessionMiddleware
 from starlette_auth.tables import User
 
 
@@ -65,7 +65,7 @@ async def admin(request):
 
 def test_authenticated():
     app = Starlette()
-    app.add_middleware(SessionMiddleware, secret_key="example")
+    app.add_middleware(SessionMiddleware, secret_key="example", cookie_path="/")
     app.add_middleware(AuthenticationMiddleware, backend=AuthenticatedBackend())
 
     app.add_route("/", homepage)
@@ -92,7 +92,7 @@ def test_authenticated():
 
 def test_not_active():
     app = Starlette()
-    app.add_middleware(SessionMiddleware, secret_key="example")
+    app.add_middleware(SessionMiddleware, secret_key="example", cookie_path="/")
     app.add_middleware(AuthenticationMiddleware, backend=InactiveBackend())
 
     app.add_route("/", homepage)
@@ -119,7 +119,7 @@ def test_not_active():
 
 def test_no_user():
     app = Starlette()
-    app.add_middleware(SessionMiddleware, secret_key="example")
+    app.add_middleware(SessionMiddleware, secret_key="example", cookie_path="/")
     app.add_middleware(AuthenticationMiddleware, backend=NoUserBackend())
 
     app.add_route("/", homepage)
