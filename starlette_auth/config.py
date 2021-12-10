@@ -3,6 +3,8 @@ from starlette.datastructures import Secret
 from starlette.templating import Jinja2Templates
 
 
+
+
 class AppConfig:
     _config = Config(".env")
 
@@ -46,9 +48,11 @@ class AppConfig:
 
     # general
     reset_pw_timeout: int = _config(
-        "RESET_PW_TIMEOUT", cast=int, default=(60 * 60 * 24 * 3)
+        "RESET_PW_TIMEOUT", cast=int, default=60 ** 2 * 24 * 3
     )
+
     secret_key = _config("SECRET_KEY", cast=Secret, default="")
+
 
 
 config = AppConfig()
