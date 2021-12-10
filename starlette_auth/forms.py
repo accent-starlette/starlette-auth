@@ -4,6 +4,11 @@ from starlette.requests import Request
 from starlette_core.mail import send_message
 from wtforms import fields, form, validators
 
+try:
+    from wtforms.fields import EmailField
+except ImportError:
+    from wtforms.fields.html5 import EmailField
+
 from .exceptions import ImproperlyConfigured
 from .tables import User
 from .tokens import token_generator
@@ -22,7 +27,7 @@ class ChangePasswordForm(form.Form):
 
 
 class LoginForm(form.Form):
-    email = fields.EmailField(
+    email = EmailField(
         validators=[
             validators.DataRequired(),
             validators.Email(message="Must be a valid email."),
@@ -32,7 +37,7 @@ class LoginForm(form.Form):
 
 
 class PasswordResetForm(form.Form):
-    email = fields.EmailField(
+    email = EmailField(
         validators=[
             validators.DataRequired(),
             validators.Email(message="Must be a valid email."),
